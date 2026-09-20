@@ -1,0 +1,36 @@
+# dsh-login-gate 配置注入
+# 挂载本插件（⚠️ 此 insert 行是插件 apply 的入口——删除则插件不加载，登录门禁静默消失）
+- insert:
+    - id: login-gate
+      name: 'dsh-login-gate'
+      config:
+        enabled: true
+        # 门禁监听地址：默认仅本机（公网入口由 Lucky/Nginx 反代到此端口）。
+        # Lucky 与 DSH 不在同一台机器时改为可信私网 IP（如 10.0.0.5）。
+        listenHost: '127.0.0.1'
+        # 门禁端口（Lucky 反代目标）
+        port: 3500
+        # DSH web 实际端口（保持 127.0.0.1 暴露，官方安全模型不变）
+        upstreamPort: 3080
+        # 转发时把 Host/Origin 改写为 loopback 形式（127.0.0.1:3080）：
+        # 1) DSH 的原生会话 cookie 绑定 authority，改写后与铸造的会话一致；
+        # 2) 官方锁 loopback 的设置面板在远程也能完整可用。
+        # 安全模型：本门禁（表单登录）是唯一认证边界——与 dsh-gateway/dsh-3301 同构。
+        rewriteHost: true
+        # 登录会话有效期（天）
+        sessionDays: 30
+        # 每 IP 连续登录失败上限（超过后指数退避锁定：30s 起、上限 300s）
+        maxFailures: 5
+        # 会话 Cookie 是否带 Secure（Lucky HTTPS 之后保持 true；纯局域网 HTTP 调试时改 false）
+        secureCookie: true
+        # WebSocket 放行路径（正则数组；特殊值 ['any'] = 全部放行）
+        # DSH 实时事件走 /api/events.mux、/api/events.host；默认放宽到 ^/api/ 以兼容全 GUI
+        wsAllow:
+          - '^/api/'
+        # 大体积 JSON/文本响应的透明 gzip（手机端拉大会话历史时省 90% 流量；上游已压缩时自动跳过）
+        gzipPass: true
+        # 多用户账号表（值为 scrypt$... 哈希；生成：node tools/hash-password.mjs <密码>）
+        # 也可不写在此处，改用 usersFile（推荐，0600 权限文件，不进 git）
+        users: {}
+        # 用户文件路径：JSON 格式 {"用户名": "scrypt$..."}；缺省 $DSH_HOME/login-gate/users.json
+        # usersFile: '~/.dsh/login-gate/users.json'

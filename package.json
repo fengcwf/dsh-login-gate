@@ -1,0 +1,39 @@
+{
+  "name": "dsh-login-gate",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness 登录门禁插件：表单登录（多用户 scrypt + HMAC 会话 + 每 IP 锁定）+ 认证反代，配合 Lucky/Nginx 提供密码登录入口",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "tools",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "login-gate",
+    "reverse-proxy",
+    "lucky",
+    "nginx"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fengcwf/dsh-login-gate.git"
+  }
+}
