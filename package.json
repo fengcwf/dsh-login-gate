@@ -1,6 +1,6 @@
 {
   "name": "dsh-login-gate",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "DeepSeek Harness 登录门禁插件：表单登录（多用户 scrypt + HMAC 会话 + 每 IP 锁定）+ 认证反代，配合 Lucky/Nginx 提供密码登录入口",
   "type": "module",
   "main": "lib/index.js",
